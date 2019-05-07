@@ -13,6 +13,7 @@ public class userDao
      user.setId(id);
      usernode.setValue(user).addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
     }
+
     public static void findUserByusername(String name,ValueEventListener valueEventListener){
       Mydatabase.getUserBranch()
              .equalTo(name,"username").

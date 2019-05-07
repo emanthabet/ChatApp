@@ -41,6 +41,7 @@ public class ChangePassword extends BaseActivity implements View.OnClickListener
         auth = FirebaseAuth.getInstance();
         initView();
 
+
     }
 
     @Override

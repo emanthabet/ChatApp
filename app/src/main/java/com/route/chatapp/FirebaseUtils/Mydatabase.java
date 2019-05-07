@@ -8,24 +8,30 @@ import com.route.chatapp.Models.User;
 
 public class Mydatabase {
     private static FirebaseDatabase firebaseDatabase;
-   public static FirebaseDatabase getInstance(){
-       if(firebaseDatabase==null)
-       {firebaseDatabase=FirebaseDatabase.getInstance(); }
-       return firebaseDatabase;
-   }
 
-  // final static String User ="user";
-  public static DatabaseReference getUserBranch(){
-       return getInstance().getReference("User");
-   }
+    public static FirebaseDatabase getInstance() {
+        if (firebaseDatabase == null) {
+            firebaseDatabase = FirebaseDatabase.getInstance();
+        }
+        return firebaseDatabase;
+    }
+
+    // final static String User ="user";
+    public static DatabaseReference getUserBranch() {
+        return getInstance().getReference("User");
+    }
 
 
-    public static DatabaseReference getchatroomBranch(){
+    public static DatabaseReference getchatroomBranch() {
         return getInstance().getReference("ChatingRoom");
     }
 
-    public static DatabaseReference getMessagesBranch(){
-       return getInstance().getReference("Messages");
+    public static DatabaseReference getMessagesBranch() {
+        return getInstance().getReference("Messages");
+    }
+
+    public static DatabaseReference getPrivateMessagesBranch() {
+        return getInstance().getReference("PrivateMessages");
     }
 
 }

@@ -5,7 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -24,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.route.chatapp.Adapters.ChatRoomListAdapter;
+import com.route.chatapp.Adapters.PageAdapter;
 import com.route.chatapp.Base.BaseActivity;
 import com.route.chatapp.FirebaseUtils.Mydatabase;
 import com.route.chatapp.Models.ChatRoom;
@@ -33,11 +38,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
-    RecyclerView recyclerView;
-    ChatRoomListAdapter adapter;
-    RecyclerView.LayoutManager layoutManager;
+
     FirebaseAuth auth;
     FirebaseUser user;
+    TabItem tabItemchat;
+    TabItem tabItemuser;
 
 
     @Override
@@ -46,35 +51,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        TabLayout tabLayout=findViewById(R.id.tablayout);
+        final ViewPager viewPager=findViewById(R.id.view_pager);
+        PageAdapter pageAdapter=new PageAdapter(getSupportFragmentManager());
+        pageAdapter.addFragment(new ChatroomList(),"Chat rooms");
+        pageAdapter.addFragment(new UsersList(),"Friends");
+        viewPager.setAdapter(pageAdapter);
+        tabLayout.setupWithViewPager(viewPager);
 
 
-        recyclerView = findViewById(R.id.chatroom_rv);
-        adapter = new ChatRoomListAdapter(null);
-        layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(layoutManager);
         auth = FirebaseAuth.getInstance();
         user=auth.getCurrentUser();
 
-        Mydatabase.getchatroomBranch().addValueEventListener(valueEventListener);
 
 
-        adapter.setOnItemClickListner(new ChatRoomListAdapter.OnItemClickListner() {
-            @Override
-            public void OnItemClickListner(ChatRoom chatRoom) {
-                ChatingRoom.chatRoom = chatRoom;
-                startActivity(new Intent(activity, ChatingRoom.class));
-            }
-        });
-
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(activity, Addchatroom.class));
-            }
-        });
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -88,24 +78,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
 
-    ValueEventListener valueEventListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            List<ChatRoom> chatRoomList = new ArrayList<>();
-            for (DataSnapshot item : dataSnapshot.getChildren()) {
-                ChatRoom room = item.getValue(ChatRoom.class);//kda b7wlo lno3 room l2ndo gy fe shakl json
-                chatRoomList.add(room);
-            }
-            adapter.changedata(chatRoomList);
-            Collections.reverse(chatRoomList);
-
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-            ShowMessage(getString(R.string.warnning), databaseError.getMessage(), getString(R.string.ok));
-        }
-    };
 
 
     @Override
@@ -158,7 +130,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
